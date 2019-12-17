@@ -44,7 +44,7 @@ function(ie_add_plugin)
         addVersionDefines(${IE_PLUGIN_VERSION_DEFINES_FOR} CI_BUILD_NUMBER)
     endif()
 
-    add_library(${IE_PLUGIN_NAME} SHARED ${IE_PLUGIN_SOURCES})
+    add_library(${IE_PLUGIN_NAME} STATIC ${IE_PLUGIN_SOURCES})
     target_compile_definitions(${IE_PLUGIN_NAME} PRIVATE IMPLEMENT_INFERENCE_ENGINE_PLUGIN)
 
     if(WIN32)

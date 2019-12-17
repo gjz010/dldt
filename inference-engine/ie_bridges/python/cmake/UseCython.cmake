@@ -295,6 +295,7 @@ function( cython_add_module _name )
     set_target_properties( ${_name} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )
   else()
     target_link_libraries( ${_name} PRIVATE ${PYTHON_LIBRARIES} )
+  set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
   endif()
 endfunction()
 

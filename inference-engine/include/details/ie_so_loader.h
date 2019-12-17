@@ -9,7 +9,8 @@
 #pragma once
 
 #ifndef _WIN32
-    #include "os/lin_shared_object_loader.h"
+    #include "os/lin_static_object_loader.h"
+//    #include "os/lin_shared_object_loader.h"
 #else
     #include "os/win_shared_object_loader.h"
 #endif

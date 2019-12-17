@@ -1,7 +1,7 @@
 // Copyright (C) 2018-2019 Intel Corporation
 // SPDX-License-Identifier: Apache-2.0
 //
-
+#define MYRIAD
 #include <memory>
 #include <cpp_interfaces/base/ie_plugin_base.hpp>
 #include "myriad_plugin.h"
@@ -10,7 +10,7 @@
 using namespace InferenceEngine;
 using namespace vpu::MyriadPlugin;
 
-INFERENCE_PLUGIN_API(StatusCode) CreatePluginEngine(IInferencePlugin *&plugin, ResponseDesc *resp) noexcept {
+INFERENCE_PLUGIN_API(StatusCode) STATIC_myriad_CreatePluginEngine(IInferencePlugin *&plugin, ResponseDesc *resp) noexcept {
     try {
         auto mvnc = std::make_shared<Mvnc>();
         plugin = make_ie_compatible_plugin({{2, 1}, CI_BUILD_NUMBER, "myriadPlugin"}, std::make_shared<Engine>(mvnc));

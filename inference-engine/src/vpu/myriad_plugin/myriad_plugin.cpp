@@ -127,6 +127,7 @@ IExecutableNetwork::Ptr Engine::ImportNetwork(const std::string &modelFileName, 
 
 InferenceEngine::Parameter Engine::GetMetric(const std::string& name,
                                      const std::map<std::string, InferenceEngine::Parameter> & options) const {
+    //std::cout<<name<<std::endl;
     if (name == METRIC_KEY(AVAILABLE_DEVICES)) {
         IE_SET_METRIC_RETURN(AVAILABLE_DEVICES, _metrics->AvailableDevicesNames(_mvnc, _devicePool));
     } else if (name == METRIC_KEY(FULL_DEVICE_NAME)) {

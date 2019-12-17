@@ -148,8 +148,8 @@ logprintf(enum mvLog_t lvl, const char * func, const int line,
     va_list args;
     va_start (args, format);
 
-    char threadName[20] = {0};
-    pthread_getname_np(pthread_self(), threadName, sizeof(threadName));
+    char threadName[20] = "<anonymous thread>";
+    //pthread_getname_np(pthread_self(), threadName, sizeof(threadName));
 
 #ifdef __RTEMS__
     if(!rtems_interrupt_is_in_progress())

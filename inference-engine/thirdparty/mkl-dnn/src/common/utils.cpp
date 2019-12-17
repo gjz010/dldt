@@ -58,7 +58,7 @@ int mkldnn_getenv(char *value, const char *name, int length) {
             if (value_length >= length) {
                 result = -value_length;
             } else {
-                strncpy(value, buffer, value_length);
+                strncpy(value, buffer, length);
                 last_idx = value_length;
                 result = value_length;
             }

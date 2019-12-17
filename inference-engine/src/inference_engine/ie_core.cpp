@@ -197,7 +197,7 @@ public:
                     listOfExtentions.push_back(extensionLocation);
                 }
             }
-
+            //std::cout<<pluginPath<<std::endl;
             // fill value in plugin registry for later lazy initialization
             {
                 PluginDescriptor desc = { pluginPath, config, listOfExtentions };
@@ -242,11 +242,16 @@ public:
 
         if (plugins.find(deviceName) == plugins.end()) {
             PluginDescriptor desc = it->second;
-
+            //std::cout<<"Creating device "<<deviceName<<" "<<desc.libraryLocation<<std::endl;
             try {
+                //std::cout<<"1"<<std::endl;
+
                 InferenceEnginePluginPtr plugin(desc.libraryLocation);
+                //std::cout<<"2"<<std::endl;
+
                 IInferencePlugin * pplugin = static_cast<IInferencePlugin *>(plugin.operator->());
                 IInferencePluginAPI * iplugin_api_ptr = dynamic_cast<IInferencePluginAPI *>(pplugin);
+                //std::cout<<"3"<<std::endl;
 
                 if (iplugin_api_ptr != nullptr) {
                     iplugin_api_ptr->SetName(deviceName);
@@ -255,9 +260,10 @@ public:
                     ICore * mutableCore = const_cast<ICore *>(static_cast<const ICore *>(this));
                     iplugin_api_ptr->SetCore(mutableCore);
                 }
+                //std::cout<<"4"<<std::endl;
 
                 InferencePlugin cppPlugin(plugin);
-
+                //std::cout<<"cppPlugin"<<std::endl;
                 // configuring
                 {
                     cppPlugin.SetConfig(desc.defaultConfig);
@@ -590,13 +596,14 @@ Parameter Core::GetMetric(const std::string & deviceName_, const std::string & n
                        "To get individual devices's metrics call GetMetric for each device separately";
         }
     }
-
+    //std::cout<<"Trying to get metric from "<<deviceName_<<std::endl;
     DeviceIDParser device(deviceName_);
     std::string deviceName = device.getDeviceName();
     std::string deviceID = device.getDeviceID();
 
     auto pluginAPIInterface = getInferencePluginAPIInterface(_impl->GetCPPPluginByName(deviceName));
 
+    //std::cout<<"Some handle"<<std::endl;
     if (pluginAPIInterface == nullptr) {
         THROW_IE_EXCEPTION << deviceName << " does not implement the GetMetric method";
     }
@@ -615,18 +622,25 @@ std::vector<std::string> Core::GetAvailableDevices() const {
     std::string propertyName = METRIC_KEY(AVAILABLE_DEVICES);
 
     for (auto && deviceName : _impl->GetListOfDevicesInRegistry()) {
+        //std::cout<<"GetAvailableDevices: "<<deviceName<<std::endl;
         Parameter p;
         std::vector<std::string> devicesIDs;
 
         try {
             p = GetMetric(deviceName, propertyName);
             devicesIDs = p.as<std::vector<std::string> >();
-        } catch (details::InferenceEngineException &) {
+        } catch (details::InferenceEngineException & ex) {
+            //std::cout<<"Something is terribly wrong."<<std::endl;
+            THROW_IE_EXCEPTION << "Failed to create plugin " << deviceName << " for device " << deviceName << "\n"
+                                   << "Please, check your environment\n"
+                                   << ex.what() << "\n";
             // plugin is not created by e.g. invalid env
         } catch (const std::exception & ex) {
+            //std::cout<<"Something is wrong. "<<ex.what()<<std::endl;
             THROW_IE_EXCEPTION << "An exception is thrown while trying to create the " <<
                 deviceName << " device and call GetMetric: " << ex.what();
         } catch (...) {
+            //std::cout<<"Something is wrong."<<std::endl;
             THROW_IE_EXCEPTION << "Unknown exception is thrown while trying to create the " <<
                 deviceName << " device and call GetMetric";
         }

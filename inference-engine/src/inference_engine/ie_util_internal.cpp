@@ -760,9 +760,9 @@ std::string getIELibraryPath() {
     GetModuleFileNameA(hm, (LPSTR)ie_library_path, sizeof(ie_library_path));
     return getPathName(ie_library_path);
 #else
-    Dl_info info;
-    dladdr(reinterpret_cast<void *>(getIELibraryPath), &info);
-    return getPathName(info.dli_fname);
+    //Dl_info info;
+    //dladdr(reinterpret_cast<void *>(getIELibraryPath), &info);
+    return getPathName("/inference_engine_notexist.so");
 #endif
 }
 

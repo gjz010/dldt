@@ -11,7 +11,7 @@ from libc.stdlib cimport malloc, free
 from libc.stdint cimport int64_t, uint8_t
 from libc.string cimport memcpy, strcpy
 import os
-import numpy as np
+#import numpy as np
 from copy import deepcopy
 import warnings
 from collections import OrderedDict, namedtuple
@@ -648,4 +648,4 @@ cdef class BlobBuffer:
         return precision_to_format[name].encode()
 
     def to_numpy(self):
-        return np.asarray(self)
+        return self

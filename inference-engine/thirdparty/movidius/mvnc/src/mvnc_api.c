@@ -15,7 +15,7 @@
 #include <windows.h>    // for Sleep()
 #include <io.h>
 #else
-#include <dlfcn.h>      // For dladdr
+//#include <dlfcn.h>      // For dladdr
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/file.h>
@@ -55,7 +55,7 @@
 //      Timeouts
 #define DEVICE_CONNECT_TIMEOUT              (2)
 #define PCIE_DEVICE_CONNECT_TIMEOUT         (10)
-#define DEVICE_APPEAR_TIMEOUT_ON_OPEN       (2)
+#define DEVICE_APPEAR_TIMEOUT_ON_OPEN       (20)
 #define DEVICE_APPEAR_TIMEOUT_ON_CLOSE      (10)
 
 #define SLEEP_MS        250
@@ -467,12 +467,14 @@ ncStatus_t getFirmwarePath(char* mv_cmd_file_path, const char* dev_addr) {
         }
         GetModuleFileNameA(hm, mv_cmd_file_path, MAX_PATH_LENGTH - 1);
 #else
-        Dl_info info;
-        dladdr(ncDeviceOpen, &info);
-        mv_strncpy(mv_cmd_file_path, MAX_PATH_LENGTH, info.dli_fname, MAX_PATH_LENGTH - NAME_LENGTH);
+        //Dl_info info;
+        //dladdr(ncDeviceOpen, &info);
+        // StaticDLDT: Use fixed firmware path to throw away dladdr.
+        printf("Hacked!\n");
+        mv_strncpy(mv_cmd_file_path, MAX_PATH_LENGTH, "/firmware/notexist.so", MAX_PATH_LENGTH - NAME_LENGTH);
 #endif
     }
-
+    printf("Hack stage 2.\n");
     p = strrchr(mv_cmd_file_path, getPathSeparator());
     size_t size_of_p = MAX_PATH_LENGTH - (p - mv_cmd_file_path);
 
@@ -1020,7 +1022,7 @@ ncStatus_t ncAvailableDevices(struct ncDeviceDescr_t *deviceDescrPtr,
                               int maxDevices, int* out_countDevices) {
     CHECK_HANDLE_CORRECT(deviceDescrPtr);
     CHECK_HANDLE_CORRECT(out_countDevices);
-
+    //printf("ncAvailableDevices\n");
     XLinkPlatformInit();
     memset(deviceDescrPtr, 0, maxDevices * sizeof(struct ncDeviceDescr_t));
 
